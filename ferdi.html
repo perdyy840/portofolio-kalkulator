@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Ferdi</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #f06, #4a90e2);
+            display: grid;
+            height: 100vh;
+            place-items: center;
+        }
+
+        .main {
+            width: 400px;
+            height: 650px;
+            background-color: rgba(76, 128, 129, 0.9);
+            position: absolute;
+            border: 5px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main input[type="text"] {
+            width: 100%;
+            height: 60px;
+            text-align: right;
+            padding: 20px;
+            outline: none;
+            font-size: 40px;
+            border: 3px solid #ccc;
+            border-radius: 8px;
+            color: #333;
+            background-color: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        .btn input[type="button"] {
+            width: 80px;
+            height: 60px;
+            font-size: 18px;
+            border-radius: 10px;
+            background-color: #48C9B0;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn input[type="button"]:hover {
+            background-color: #1ABC9C;
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        .btn input[type="button"].clear {
+            background-color: #E74C3C;
+        }
+
+        .btn input[type="button"].clear:hover {
+            background-color: #C0392B;
+        }
+
+        .btn input[type="button"].back {
+            background-color: #F39C12;
+        }
+
+        .btn input[type="button"].back:hover {
+            background-color: #E67E22;
+        }
+
+        .btn input[type="button"].equal {
+            background-color: #3498DB;
+            grid-column: span 2;
+        }
+
+        .btn input[type="button"].equal:hover {
+            background-color: #2980B9;
+        }
+
+        .history {
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .history p {
+            margin: 5px 0;
+            padding: 3px;
+            border-bottom: 1px solid #ddd;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <h3>UKK 2025 FERDI NANTI KURNAWAN XII RPL 1 (BM)</h3>
+        <input type="text" id="res">
+        <div class="btn">
+            <input type="button" value="9" onclick="Solve('9')">
+            <input type="button" value="8" onclick="Solve('8')">
+            <input type="button" value="7" onclick="Solve('7')">
+            <input type="button" value="-" onclick="Solve('-')">
+
+            <input type="button" value="6" onclick="Solve('6')">
+            <input type="button" value="5" onclick="Solve('5')">
+            <input type="button" value="4" onclick="Solve('4')">
+            <input type="button" value="%" onclick="Solve('%')">
+
+            <input type="button" value="3" onclick="Solve('3')">
+            <input type="button" value="2" onclick="Solve('2')">
+            <input type="button" value="1" onclick="Solve('1')">
+            <input type="button" value="+" onclick="Solve('+')">
+
+            <input type="button" value="0" onclick="Solve('0')">
+            <input type="button" value="/" onclick="Solve('/')">
+            <input type="button" value="X" onclick="Solve('*')">
+            <input type="button" value="=" class="equal" onclick="Result()">
+
+            <input type="button" value="Clear" class="clear" onclick="Clear()">
+            <input type="button" value="Back" class="back" onclick="Back()">
+        </div>
+
+        <!-- History Section -->
+        <div class="history" id="history">
+            <!-- History will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Array to store the history of calculations
+        var historyList = [];
+
+        // Function to append the expression to the history
+        function updateHistory(expression, result) {
+            // Create a history item as a string
+            var historyItem = `${expression} = ${result}`;
+
+            // Add the history item to the array
+            historyList.push(historyItem);
+
+            // If there are more than 5 items, remove the first item (oldest)
+            if (historyList.length > 5) {
+                historyList.shift();
+            }
+
+            // Update the history display
+            displayHistory();
+        }
+
+        // Function to display the history
+        function displayHistory() {
+            var historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = ''; // Clear current history
+
+            // Loop through the historyList and display each entry
+            historyList.forEach(function (entry) {
+                var p = document.createElement('p');
+                p.textContent = entry;
+                historyDiv.appendChild(p);
+            });
+        }
+
+        // Function to solve the expression
+        function Solve(val) {
+            var v = document.getElementById('res');
+            v.value += val;
+        }
+
+        // Function to calculate and display the result
+        function Result() {
+            var expression = document.getElementById('res').value;
+            try {
+                var result = eval(expression);  // Calculate result using eval
+                document.getElementById('res').value = result;
+                updateHistory(expression, result); // Save to history
+            } catch (error) {
+                document.getElementById('res').value = 'Error';
+            }
+        }
+
+        // Function to clear the display
+        function Clear() {
+            var inp = document.getElementById('res');
+            inp.value = '';
+        }
+
+        // Function to delete the last character
+        function Back() {
+            var ev = document.getElementById('res');
+            ev.value = ev.value.slice(0, -1);  // Remove the last character
+        }
+    </script>
+</body>
+
+</html>
